@@ -1,12 +1,13 @@
 <script lang="ts">
-	// import recipes.md and split the text by '---'
 	import recipes from '$lib/data/recipes.md?raw';
+	import {marked} from "marked";
 
 	const allRecipes = recipes.split('---SPLIT---');
+	const recipesHtml = allRecipes.map(recipe => marked(recipe));
 </script>
 
 <main>
-	{#each allRecipes as recipe}
-		<pre>{recipe}</pre>
+	{#each recipesHtml as recipe}
+		{@html recipe}
 	{/each}
 </main>
