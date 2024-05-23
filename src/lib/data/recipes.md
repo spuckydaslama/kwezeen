@@ -1,15 +1,26 @@
 # Brokkoli Cheddar Suppe
 
-[loveandlemons](https://www.loveandlemons.com/wprm_print/67502)
+[zum Rezept](https://www.loveandlemons.com/wprm_print/67502)
 
+---INGR: broccoli, cheddar, karotte---
+---FIND: online---
 ---SPLIT---
 
-# Recipe 2
+# One-Pot Curry Halloumi
 
-some text 2
+[zum Rezept](https://www.kitchenstories.com/de/rezepte/einfaches-one-pot-curry-mit-halloumi)
 
+---INGR: masala, süßkartoffel, erbse---
+---FIND: online---
 ---SPLIT---
 
-# Recipe 3
+# Milchreis
 
-some text 3
+## 🍚
+
+---FIND: rosa---
+---SPLIT---
+
+# Indischer Gemüseauflauf
+
+[zum Rezept](https://www.essen-und-trinken.de/rezepte/indischer-gemueseauflauf-13458974.html)
