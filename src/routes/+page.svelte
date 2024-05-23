@@ -6,7 +6,7 @@
 	import * as Sheet from '$lib/components/ui/sheet';
 	import { Toggle } from '$lib/components/ui/toggle';
 	import { Button } from '$lib/components/ui/button';
-	import { Settings2 } from 'lucide-svelte';
+	import { Filter, FilterX } from 'lucide-svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import recipes from '$lib/data/recipes.md?raw';
 
@@ -65,6 +65,11 @@
 		}
 		return randomRecipes.filter((recipe) => selectedTags.every((tag) => recipe.tags.includes(tag)));
 	});
+	let filteredTags = $derived.by(() => {
+		// filter out tags that are not in the filtered recipes
+		const tags = new Set(filteredRecipes.flatMap((recipe) => recipe.tags));
+		return allTagsSorted.filter((tag) => tags.has(tag));
+	});
 	onMount(() => {
 		const recipes = [...allRecipes];
 		shuffle(recipes);
@@ -76,17 +81,18 @@
 	<Sheet.Root>
 		<Sheet.Trigger class="mb-3">
 			<Button>
-				<Settings2 class="mr-2 h-4 w-4" />
+				<Filter class="mr-2 h-4 w-4" />
 				Filters ({selectedTags.length})
 			</Button>
 		</Sheet.Trigger>
 		<Sheet.Content>
 			<Sheet.Header>
-				<Sheet.Title>Filter by tags</Sheet.Title>
+				<Sheet.Title class="mb-2">Filter by tags</Sheet.Title>
 			</Sheet.Header>
-			<div class="grid grid-flow-row grid-cols-3 gap-4">
-				{#each allTagsSorted as tag (tag)}
+			<div class="flex flex-wrap gap-1 my-2">
+				{#each filteredTags as tag (tag)}
 					<Toggle
+						class="flex-initial"
 						pressed={selectedTags.includes(tag)}
 						variant="outline"
 						onPressedChange={(pressed) => onFilterTagChange(tag, pressed)}
@@ -95,6 +101,12 @@
 					</Toggle>
 				{/each}
 			</div>
+			<Sheet.Footer>
+				<Button onclick={() => selectedTags = []}>
+					<FilterX class="mr-2 h-4 w-4" />
+					Reset filters
+				</Button>
+			</Sheet.Footer>
 		</Sheet.Content>
 	</Sheet.Root>
 
