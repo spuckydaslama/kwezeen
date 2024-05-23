@@ -3,6 +3,10 @@
 <script lang="ts">
 	import * as Carousel from '$lib/components/ui/carousel';
 	import * as Card from '$lib/components/ui/card';
+	import * as Sheet from '$lib/components/ui/sheet';
+	import { Toggle } from '$lib/components/ui/toggle';
+	import { Button } from '$lib/components/ui/button';
+	import { Settings2 } from 'lucide-svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import recipes from '$lib/data/recipes.md?raw';
 
@@ -21,48 +25,84 @@
 	marked.use({ renderer: markdownRenderer });
 
 	const parseRecipeMarkdown = (recipe: string) => {
-		console.log(recipe);
-		// get comma separated strings as array from a line starting with ---INGR: ending with ---
-		const ingredients =
+		const tags =
 			recipe
-				.match(/---INGR:([^-]*)---/)?.[1]
+				.match(/---TAGS([^-]*)---/)?.[1]
 				.split(',')
-				.map((ingredient) => ingredient.trim()) ?? [];
-		console.log(ingredients);
-		// remove the ingredients line from the recipe
-		recipe = recipe.replace(/---INGR:[^-]*---/, '');
-		// get comma separated strings as array from a line starting with ---FIND: ending with ---
-		const whereToFind =
-			recipe
-				.match(/---FIND:([^-]*)---/)?.[1]
-				.split(',')
-				.map((ingredient) => ingredient.trim()) ?? [];
-		// remove the where to find line from the recipe
-		recipe = recipe.replace(/---FIND:[^-]*---/, '');
+				.map((tag) => tag.trim()) ?? [];
+		recipe = recipe.replace(/---TAGS[^-]*---/, '');
 
 		return {
-			ingredients,
-			whereToFind,
+			tags,
 			html: marked(recipe)
 		} as Recipe;
 	};
 	const allRecipesMarkdown = recipes.split('---SPLIT---');
-	const allRecipesAsHtml = allRecipesMarkdown.map(parseRecipeMarkdown);
+	const allRecipes = allRecipesMarkdown.map(parseRecipeMarkdown);
+	const allTags = new Set(allRecipes.flatMap((recipe) => recipe.tags));
+	const allTagsSorted = [...allTags].toSorted((a, b) => {
+		const aIsSpecial = a.match(/^[A-Z]_/) ? 1 : 0;
+		const bIsSpecial = b.match(/^[A-Z]_/) ? 1 : 0;
+		return bIsSpecial - aIsSpecial || a.localeCompare(b);
+	});
+	const sanitizeTag = (tag: string) => tag.replace(/^[A-Z]_/, '');
+	const onFilterTagChange = (tag: string, pressed: boolean) => {
+		if (pressed) {
+			selectedTags.push(tag);
+		} else {
+			const indexOfTag = selectedTags.indexOf(tag);
+			if (indexOfTag !== -1) {
+				selectedTags.splice(indexOfTag, 1);
+			}
+		}
+	};
 
 	let randomRecipes: Recipe[] = $state([]);
+	let selectedTags: string[] = $state([]);
+	let filteredRecipes = $derived.by(() => {
+		if (selectedTags.length === 0) {
+			return randomRecipes;
+		}
+		return randomRecipes.filter((recipe) => selectedTags.every((tag) => recipe.tags.includes(tag)));
+	});
 	onMount(() => {
-		const recipes = [...allRecipesAsHtml];
+		const recipes = [...allRecipes];
 		shuffle(recipes);
 		randomRecipes = recipes;
 	});
 </script>
 
-<main>
+<main class="h-full p-2">
+	<Sheet.Root>
+		<Sheet.Trigger class="mb-3">
+			<Button>
+				<Settings2 class="mr-2 h-4 w-4" />
+				Filters ({selectedTags.length})
+			</Button>
+		</Sheet.Trigger>
+		<Sheet.Content>
+			<Sheet.Header>
+				<Sheet.Title>Filter by tags</Sheet.Title>
+			</Sheet.Header>
+			<div class="grid grid-flow-row grid-cols-3 gap-4">
+				{#each allTagsSorted as tag (tag)}
+					<Toggle
+						pressed={selectedTags.includes(tag)}
+						variant="outline"
+						onPressedChange={(pressed) => onFilterTagChange(tag, pressed)}
+					>
+						{sanitizeTag(tag)}
+					</Toggle>
+				{/each}
+			</div>
+		</Sheet.Content>
+	</Sheet.Root>
+
 	<Carousel.Root opts={{ loop: true }}>
 		<Carousel.Content>
-			{#each randomRecipes as recipe}
+			{#each filteredRecipes as recipe}
 				<Carousel.Item class="h-screen">
-					<Card.Root class="m-2">
+					<Card.Root>
 						<Card.Content>
 							<div class="prose p-1">
 								<!-- eslint-disable svelte/no-at-html-tags -->
@@ -70,12 +110,9 @@
 							</div>
 						</Card.Content>
 						<Card.Footer>
-							<div class="flex gap-1">
-								{#each recipe.whereToFind as whereToFind}
-									<Badge variant="outline">📌 {whereToFind}</Badge>
-								{/each}
-								{#each recipe.ingredients as ingredient}
-									<Badge variant="outline">{ingredient}</Badge>
+							<div class="flex flex-wrap gap-1">
+								{#each recipe.tags as tag}
+									<Badge class="flex-initial" variant="outline">{sanitizeTag(tag)}</Badge>
 								{/each}
 							</div>
 						</Card.Footer>
