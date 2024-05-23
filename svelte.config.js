@@ -11,13 +11,14 @@ const config = {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		}
 	},
-	vitePlugin: {
-		dynamicCompileOptions({filename}){
-			if(!filename.includes('node_modules')){
-				return {runes: true}
-			}
-		}
-	}
+	// Cant turn it on globally since it breaks the shadcn components
+	// vitePlugin: {
+	// 	dynamicCompileOptions({filename}){
+	// 		if(!filename.includes('node_modules')){
+	// 			return {runes: true}
+	// 		}
+	// 	}
+	// }
 };
 
 export default config;
