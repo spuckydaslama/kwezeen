@@ -3,7 +3,7 @@
 [zum Rezept](https://www.loveandlemons.com/wprm_print/67502)
 
 ---INGR: broccoli, cheddar, karotte---
----FIND: online---
+---FIND: www---
 ---SPLIT---
 
 # One-Pot Curry Halloumi
@@ -11,7 +11,7 @@
 [zum Rezept](https://www.kitchenstories.com/de/rezepte/einfaches-one-pot-curry-mit-halloumi)
 
 ---INGR: masala, süßkartoffel, erbse---
----FIND: online---
+---FIND: www---
 ---SPLIT---
 
 # Milchreis

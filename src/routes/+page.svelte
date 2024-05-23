@@ -3,6 +3,7 @@
 <script lang="ts">
 	import * as Carousel from '$lib/components/ui/carousel';
 	import * as Card from '$lib/components/ui/card';
+	import { Badge } from '$lib/components/ui/badge';
 	import recipes from '$lib/data/recipes.md?raw';
 
 	import { marked } from 'marked';
@@ -20,7 +21,7 @@
 	marked.use({ renderer: markdownRenderer });
 
 	const parseRecipeMarkdown = (recipe: string) => {
-		console.log(recipe)
+		console.log(recipe);
 		// get comma separated strings as array from a line starting with ---INGR: ending with ---
 		const ingredients =
 			recipe
@@ -69,7 +70,14 @@
 							</div>
 						</Card.Content>
 						<Card.Footer>
-							{recipe.ingredients}
+							<div class="flex gap-1">
+								{#each recipe.whereToFind as whereToFind}
+									<Badge variant="outline">📌 {whereToFind}</Badge>
+								{/each}
+								{#each recipe.ingredients as ingredient}
+									<Badge variant="outline">{ingredient}</Badge>
+								{/each}
+							</div>
 						</Card.Footer>
 					</Card.Root>
 				</Carousel.Item>
