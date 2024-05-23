@@ -22,12 +22,12 @@
 	});
 </script>
 
-<main class="h-full w-full p-3">
+<main>
 	<Carousel.Root opts={{ loop: true }}>
 		<Carousel.Content>
 			{#each randomRecipes as recipe}
-				<Carousel.Item>
-					<Card.Root>
+				<Carousel.Item class="h-screen">
+					<Card.Root class="m-2">
 						<Card.Content>
 							<div class="prose p-1">
 								<!-- eslint-disable svelte/no-at-html-tags -->
