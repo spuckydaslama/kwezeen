@@ -11,8 +11,12 @@ const config = {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		}
 	},
-	compilerOptions: {
-		runes: true
+	vitePlugin: {
+		dynamicCompileOptions({filename}){
+			if(!filename.includes('node_modules')){
+				return {runes: true}
+			}
+		}
 	}
 };
 
