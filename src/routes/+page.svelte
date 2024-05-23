@@ -30,6 +30,7 @@
 					<Card.Root>
 						<Card.Content>
 							<div class="prose p-1">
+								<!-- eslint-disable svelte/no-at-html-tags -->.
 								{@html recipe}
 							</div>
 						</Card.Content>

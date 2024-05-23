@@ -10,7 +10,7 @@ const config = {
 		paths: {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		}
-	},
+	}
 	// Cant turn it on globally since it breaks the shadcn components
 	// vitePlugin: {
 	// 	dynamicCompileOptions({filename}){
