@@ -13,7 +13,7 @@
 </script>
 
 <div
-	class="overflow-hidden"
+	class="overflow-hidden h-full"
 	use:emblaCarouselSvelte={{
 		options: {
 			container: '[data-embla-container]',

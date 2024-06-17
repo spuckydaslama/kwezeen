@@ -25,12 +25,14 @@
 	marked.use({ renderer: markdownRenderer });
 
 	const parseRecipeMarkdown = (recipe: string) => {
+		const tagsRegExp = /---TAGS([^-]*)---/i;
 		const tags =
 			recipe
-				.match(/---TAGS([^-]*)---/)?.[1]
+				.match(tagsRegExp)?.[1]
 				.split(',')
 				.map((tag) => tag.trim()) ?? [];
-		recipe = recipe.replace(/---TAGS[^-]*---/, '');
+
+		recipe = recipe.replace(tagsRegExp, '');
 
 		return {
 			tags,
@@ -70,6 +72,7 @@
 		const tags = new Set(filteredRecipes.flatMap((recipe) => recipe.tags));
 		return allTagsSorted.filter((tag) => tags.has(tag));
 	});
+	let filterSheetOpen = $state(false);
 	onMount(() => {
 		const recipes = [...allRecipes];
 		shuffle(recipes);
@@ -77,19 +80,13 @@
 	});
 </script>
 
-<main class="h-full p-2">
-	<Sheet.Root>
-		<Sheet.Trigger class="mb-3">
-			<Button>
-				<Filter class="mr-2 h-4 w-4" />
-				Filters ({selectedTags.length})
-			</Button>
-		</Sheet.Trigger>
+<main class="flex h-screen flex-col">
+	<Sheet.Root bind:open={filterSheetOpen}>
 		<Sheet.Content>
 			<Sheet.Header>
 				<Sheet.Title class="mb-2">Filter by tags</Sheet.Title>
 			</Sheet.Header>
-			<div class="flex flex-wrap gap-1 my-2">
+			<div class="my-2 flex flex-wrap gap-1">
 				{#each filteredTags as tag (tag)}
 					<Toggle
 						class="flex-initial"
@@ -102,7 +99,7 @@
 				{/each}
 			</div>
 			<Sheet.Footer>
-				<Button onclick={() => selectedTags = []}>
+				<Button onclick={() => (selectedTags = [])}>
 					<FilterX class="mr-2 h-4 w-4" />
 					Reset filters
 				</Button>
@@ -110,13 +107,13 @@
 		</Sheet.Content>
 	</Sheet.Root>
 
-	<Carousel.Root opts={{ loop: true }}>
+	<Carousel.Root class="h-full" opts={{ loop: true }}>
 		<Carousel.Content>
 			{#each filteredRecipes as recipe}
-				<Carousel.Item class="h-screen">
-					<Card.Root>
+				<Carousel.Item class="h-full">
+					<Card.Root class="m-2">
 						<Card.Content>
-							<div class="prose p-1">
+							<div class="prose">
 								<!-- eslint-disable svelte/no-at-html-tags -->
 								{@html recipe.html}
 							</div>
@@ -134,3 +131,9 @@
 		</Carousel.Content>
 	</Carousel.Root>
 </main>
+<div class="fixed bottom-0 right-0 m-2">
+	<Button onclick={() => (filterSheetOpen = true)}>
+		<Filter class="mr-2 h-4 w-4" />
+		Filters ({selectedTags.length})
+	</Button>
+</div>
