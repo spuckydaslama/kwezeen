@@ -12,7 +12,6 @@
 
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { quintOut } from 'svelte/easing';
 	import { shuffle } from './shuffle';
