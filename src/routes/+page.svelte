@@ -124,13 +124,15 @@
 				{#each usefulTags as tag (tag)}
 					<div animate:flip={{ duration: 500, easing: quintOut }}>
 						<Toggle
-							class="flex-initial gap-1 text-xs md:text-sm"
+							class="h-8 flex-initial gap-1 px-1 text-xs md:h-10 md:text-sm"
 							pressed={selectedTags.includes(tag)}
 							variant="outline"
 							onPressedChange={(pressed) => onFilterTagChange(tag, pressed)}
 						>
 							<span>{sanitizeTag(tag)}</span>
-							<span>({filteredRecipes.filter((recipe) => recipe.tags.includes(tag)).length})</span>
+							<span class="self-start align-super text-[0.5rem]">
+								{filteredRecipes.filter((recipe) => recipe.tags.includes(tag)).length}
+							</span>
 						</Toggle>
 					</div>
 				{/each}

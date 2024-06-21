@@ -81,7 +81,7 @@
 
 # Shakshuka
 
----Tags L_📌 tmix, paprika
+---Tags L_📌 tmix, paprika---
 ---SPLIT---
 
 # Jouvetsi
@@ -147,4 +147,3 @@
 # Gemüseauflauf Walnuss-Käse-Kruste
 
 ---Tags L_📌 rosa, karotte, blumenkohl, kartoffel---
----SPLIT---
