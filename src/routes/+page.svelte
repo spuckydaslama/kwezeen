@@ -16,6 +16,7 @@
 	import { quintOut } from 'svelte/easing';
 	import { shuffle } from './shuffle';
 	import type { Recipe } from './types';
+	import type { CarouselAPI } from '$lib/components/ui/carousel/context';
 
 	// override the markdown renderer for links to add a target _blank
 	const markdownRenderer = {
@@ -86,7 +87,26 @@
 			return filteredRecipesWithThisTag.length !== filteredRecipes.length;
 		});
 	});
+
+	let carouselApi: CarouselAPI | undefined = $state();
+	let currentSlideIndex = $state(1);
+	$effect(() => {
+		const getCurrentSlide = () => {
+			currentSlideIndex = (carouselApi && carouselApi.selectedScrollSnap() + 1) || 0;
+		};
+		if (!!carouselApi) {
+			carouselApi.on('select', getCurrentSlide);
+			carouselApi.on('slidesChanged', getCurrentSlide);
+		}
+		return () => {
+			if (!!carouselApi) {
+				carouselApi.off('select', getCurrentSlide);
+				carouselApi.off('slidesChanged', getCurrentSlide);
+			}
+		};
+	});
 	let filterSheetOpen = $state(false);
+	$inspect(filterSheetOpen);
 	onMount(() => {
 		const recipes = [...allRecipes];
 		shuffle(recipes);
@@ -116,21 +136,21 @@
 				{/each}
 			</div>
 			<Sheet.Footer>
-				<div class="flex flex-col gap-4 py-4">
-					<Button onclick={() => (filterSheetOpen = false)}>
-						<Filter class="mr-2 h-4 w-4" />
-						Apply
-					</Button>
-					<Button variant="secondary" onclick={() => (selectedTags = [])}>
+				<div class="flex gap-2 py-4">
+					<Button variant="secondary" class="grow" on:click={() => (selectedTags = [])}>
 						<FilterX class="mr-2 h-4 w-4" />
 						Reset filters
+					</Button>
+					<Button class="grow" on:click={() => (filterSheetOpen = false)}>
+						<Filter class="mr-2 h-4 w-4" />
+						Apply
 					</Button>
 				</div>
 			</Sheet.Footer>
 		</Sheet.Content>
 	</Sheet.Root>
 
-	<Carousel.Root class="h-full" opts={{ loop: true }}>
+	<Carousel.Root bind:api={carouselApi} class="h-full" opts={{ loop: true }}>
 		<Carousel.Content>
 			{#each filteredRecipes as recipe}
 				<Carousel.Item class="h-full">
@@ -156,9 +176,12 @@
 		</Carousel.Content>
 	</Carousel.Root>
 </main>
-<div class="fixed bottom-0 right-0 m-2">
-	<Button onclick={() => (filterSheetOpen = true)}>
+<div class="fixed bottom-0 right-0 m-2 flex items-center gap-4">
+	<div>
+		<span>{currentSlideIndex} / {filteredRecipes.length}</span>
+	</div>
+	<Button on:click={() => (filterSheetOpen = true)}>
 		<Filter class="mr-2 h-4 w-4" />
-		Filters ({selectedTags.length})
+		<span>Filters ({selectedTags.length})</span>
 	</Button>
 </div>
