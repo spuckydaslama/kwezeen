@@ -72,3 +72,79 @@
 # Aubergine Papeton
 
 ---Tags L_📌 rosa, aubergine---
+---SPLIT---
+
+# Aubergine orientalisch
+
+---Tags L_📌 ???, aubergine, joghurt---
+---SPLIT---
+
+# Shakshuka
+
+---Tags L_📌 tmix, paprika
+---SPLIT---
+
+# Jouvetsi
+
+---Tags L_📌 maga, hackfleisch, nudeln---
+---SPLIT---
+
+# Ratatouille
+
+---Tags L_📌 ???, zucchini, aubergine, paprika, tomate---
+---SPLIT---
+
+# Gefüllte Paprika Tomatensauce
+
+---Tags L_📌 ???, paprika, tomate---
+---SPLIT---
+
+# Reissuppe Zuccini Feta
+
+---Tags L_📌 ???, zucchini, feta---
+---SPLIT---
+
+# Soupe Pistou
+
+---Tags L_📌 ???, zucchini, bohnen, karotte, kartoffel, tomate---
+---SPLIT---
+
+# Zuccini Puffer mit Tzatziki
+
+---Tags L_📌 ???, zucchini, joghurt---
+---SPLIT---
+
+# Panierte Aubergine Bouletten
+
+---Tags L_📌 ???, aubergine---
+---SPLIT---
+
+# Kartoffel Gratin
+
+---Tags L_📌 ???, kartoffel---
+---SPLIT---
+
+# Linsenlasagne
+
+---Tags L_📌 rosa, linse, karotte, tomate---
+---SPLIT---
+
+# Pastinaken Linsenlasagne
+
+---Tags L_📌 rosa, linse, pastinake---
+---SPLIT---
+
+# Tagine Hühnchen karamelisierte Tomaten
+
+---Tags L_📌 rosa, tomate, huhn---
+---SPLIT---
+
+# Lauwarmer Linsensalat mit Ofengemüse
+
+---Tags L_📌 rosa, linse, kürbis, rotebete, paprika---
+---SPLIT---
+
+# Gemüseauflauf Walnuss-Käse-Kruste
+
+---Tags L_📌 rosa, karotte, blumenkohl, kartoffel---
+---SPLIT---
