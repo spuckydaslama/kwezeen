@@ -12,6 +12,9 @@
 
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import { quintOut } from 'svelte/easing';
 	import { shuffle } from './shuffle';
 	import type { Recipe } from './types';
 
@@ -72,6 +75,18 @@
 		const tags = new Set(filteredRecipes.flatMap((recipe) => recipe.tags));
 		return allTagsSorted.filter((tag) => tags.has(tag));
 	});
+	// find all tags that would reduce the number of currently filtered recipes + the already selected tags
+	let usefulTags = $derived.by(() => {
+		return filteredTags.filter((tag) => {
+			if (selectedTags.includes(tag)) {
+				return true;
+			}
+			const filteredRecipesWithThisTag = filteredRecipes.filter((recipe) =>
+				recipe.tags.includes(tag)
+			);
+			return filteredRecipesWithThisTag.length !== filteredRecipes.length;
+		});
+	});
 	let filterSheetOpen = $state(false);
 	onMount(() => {
 		const recipes = [...allRecipes];
@@ -82,27 +97,36 @@
 
 <main class="flex h-screen flex-col">
 	<Sheet.Root bind:open={filterSheetOpen}>
-		<Sheet.Content>
-			<Sheet.Header>
+		<Sheet.Content class="flex flex-col">
+			<Sheet.Header class="grow self-start">
 				<Sheet.Title class="mb-2">Filter by tags</Sheet.Title>
 			</Sheet.Header>
-			<div class="my-2 flex flex-wrap gap-1">
-				{#each filteredTags as tag (tag)}
-					<Toggle
-						class="flex-initial"
-						pressed={selectedTags.includes(tag)}
-						variant="outline"
-						onPressedChange={(pressed) => onFilterTagChange(tag, pressed)}
-					>
-						{sanitizeTag(tag)}
-					</Toggle>
+			<div class="my-2 flex flex-wrap gap-2">
+				{#each usefulTags as tag (tag)}
+					<div animate:flip={{ duration: 500, easing: quintOut }}>
+						<Toggle
+							class="flex-initial gap-1 text-xs md:text-sm"
+							pressed={selectedTags.includes(tag)}
+							variant="outline"
+							onPressedChange={(pressed) => onFilterTagChange(tag, pressed)}
+						>
+							<span>{sanitizeTag(tag)}</span>
+							<span>({filteredRecipes.filter((recipe) => recipe.tags.includes(tag)).length})</span>
+						</Toggle>
+					</div>
 				{/each}
 			</div>
 			<Sheet.Footer>
-				<Button onclick={() => (selectedTags = [])}>
-					<FilterX class="mr-2 h-4 w-4" />
-					Reset filters
-				</Button>
+				<div class="flex flex-col gap-4 py-4">
+					<Button onclick={() => (filterSheetOpen = false)}>
+						<Filter class="mr-2 h-4 w-4" />
+						Apply
+					</Button>
+					<Button variant="secondary" onclick={() => (selectedTags = [])}>
+						<FilterX class="mr-2 h-4 w-4" />
+						Reset filters
+					</Button>
+				</div>
 			</Sheet.Footer>
 		</Sheet.Content>
 	</Sheet.Root>
@@ -121,7 +145,9 @@
 						<Card.Footer>
 							<div class="flex flex-wrap gap-1">
 								{#each recipe.tags as tag}
-									<Badge class="flex-initial" variant="outline">{sanitizeTag(tag)}</Badge>
+									<Badge class="text flex-initial text-sm" variant="outline">
+										{sanitizeTag(tag)}
+									</Badge>
 								{/each}
 							</div>
 						</Card.Footer>
