@@ -6,17 +6,19 @@
 	import * as Sheet from '$lib/components/ui/sheet';
 	import { Toggle } from '$lib/components/ui/toggle';
 	import { Button } from '$lib/components/ui/button';
-	import { Filter, FilterX } from 'lucide-svelte';
+	import { Filter, FilterX, Search, CircleX } from 'lucide-svelte';
 	import { Badge } from '$lib/components/ui/badge';
-	import recipes from '$lib/data/recipes.md?raw';
-
+	import { Input } from '$lib/components/ui/input';
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import { flip } from 'svelte/animate';
+	import { fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { shuffle } from './shuffle';
 	import type { Recipe } from './types';
 	import type { CarouselAPI } from '$lib/components/ui/carousel/context';
+
+	import recipes from '$lib/data/recipes.md?raw';
 
 	// override the markdown renderer for links to add a target _blank
 	const markdownRenderer = {
@@ -64,11 +66,19 @@
 
 	let randomRecipes: Recipe[] = $state([]);
 	let selectedTags: string[] = $state([]);
+	let searchValue = $state('');
 	let filteredRecipes = $derived.by(() => {
-		if (selectedTags.length === 0) {
-			return randomRecipes;
-		}
-		return randomRecipes.filter((recipe) => selectedTags.every((tag) => recipe.tags.includes(tag)));
+		const filteredByTags = randomRecipes.filter((recipe) =>
+			selectedTags.every((tag) => recipe.tags.includes(tag))
+		);
+		console.log('searchValue for filtering recipes', searchValue);
+		return searchValue
+			? filteredByTags.filter(
+					(recipe) =>
+						recipe.html.toLowerCase().includes(searchValue.toLowerCase()) ||
+						recipe.tags.some((tag) => tag.toLowerCase().includes(searchValue.toLowerCase()))
+				)
+			: filteredByTags;
 	});
 	let filteredTags = $derived.by(() => {
 		// filter out tags that are not in the filtered recipes
@@ -106,7 +116,16 @@
 		};
 	});
 	let filterSheetOpen = $state(false);
-	$inspect(filterSheetOpen);
+
+	$inspect(searchValue);
+
+	const decorateWithSearchValue = (html: string) => {
+		if (!searchValue) {
+			return html;
+		}
+		const searchValueRegExp = new RegExp(searchValue, 'gi');
+		return html.replace(searchValueRegExp, (match) => `<mark>${match}</mark>`);
+	};
 	onMount(() => {
 		const recipes = [...allRecipes];
 		shuffle(recipes);
@@ -124,7 +143,7 @@
 				{#each usefulTags as tag (tag)}
 					<div animate:flip={{ duration: 500, easing: quintOut }}>
 						<Toggle
-							class="h-8 flex-initial gap-1 px-1 text-xs md:h-10 md:text-sm"
+							class="h-8 flex-initial px-1 text-xs md:h-10 md:text-sm"
 							pressed={selectedTags.includes(tag)}
 							variant="outline"
 							onPressedChange={(pressed) => onFilterTagChange(tag, pressed)}
@@ -160,7 +179,7 @@
 						<Card.Content>
 							<div class="prose">
 								<!-- eslint-disable svelte/no-at-html-tags -->
-								{@html recipe.html}
+								{@html decorateWithSearchValue(recipe.html)}
 							</div>
 						</Card.Content>
 						<Card.Footer>
@@ -182,6 +201,25 @@
 	<div>
 		<span>{currentSlideIndex} / {filteredRecipes.length}</span>
 	</div>
+	<form>
+		<div class="relative">
+			<Search class="absolute left-2 top-[50%] size-4 translate-y-[-50%] text-muted-foreground" />
+			<Input placeholder="Search" bind:value={searchValue} class="pl-8 md:w-80" />
+			{#if searchValue}
+				<div transition:fade={{ duration: 150 }}>
+					<Button
+						on:click={() => {
+							searchValue = '';
+						}}
+						variant="ghost"
+						class="absolute right-2 top-[50%] h-6 translate-y-[-50%] p-1"
+					>
+						<CircleX class="size-4" />
+					</Button>
+				</div>
+			{/if}
+		</div>
+	</form>
 	<Button on:click={() => (filterSheetOpen = true)}>
 		<Filter class="mr-2 h-4 w-4" />
 		<span>Filters ({selectedTags.length})</span>
