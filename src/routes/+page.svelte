@@ -198,7 +198,7 @@
 	</Carousel.Root>
 </main>
 <div class="fixed bottom-0 right-0 m-2 flex items-center gap-4">
-	<div>
+	<div class="shrink-0">
 		<span>{currentSlideIndex} / {filteredRecipes.length}</span>
 	</div>
 	<form>
